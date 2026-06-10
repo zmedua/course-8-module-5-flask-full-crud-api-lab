@@ -22,33 +22,44 @@ events = [
 @app.route("/events", methods=["POST"])
 def create_event():
     # TODO: Task 2 - Design and Develop the Code
-
+    data = request.get_json()
     # TODO: Task 3 - Implement the Loop and Process Each Element
-
+    new_id = max((e.id for e in events),default=0) + 1
+    new_event = Event(id=new_id,title=data["title"])
+    events.append(new_event)
     # TODO: Task 4 - Return and Handle Results
-    pass
+    return jsonify(new_event.to_dict()), 201
 
 # TODO: Task 1 - Define the Problem
 # Update the title of an existing event
 @app.route("/events/<int:event_id>", methods=["PATCH"])
 def update_event(event_id):
     # TODO: Task 2 - Design and Develop the Code
-
+    data = request.get_json()
+    
     # TODO: Task 3 - Implement the Loop and Process Each Element
-
+    event = next((e for e in events if e.id ==event_id), None)
+    if not event:
+        return ("Event not found", 404)
+    if "title" in data:
+        event.title = data["title"]
     # TODO: Task 4 - Return and Handle Results
-    pass
+    return jsonify(event.to_dict())
 
 # TODO: Task 1 - Define the Problem
 # Remove an event from the list
 @app.route("/events/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
     # TODO: Task 2 - Design and Develop the Code
-
+    global events
     # TODO: Task 3 - Implement the Loop and Process Each Element
-
+    event = next((e for e in events if e.id == event_id), None)
+    if not event:
+        return ("Event not found", 404)
+    events = [e for e in events if e.id != id]
+    return ("Event deleted", 204)
     # TODO: Task 4 - Return and Handle Results
-    pass
+
 
 if __name__ == "__main__":
     app.run(debug=True)
